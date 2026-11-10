@@ -1,0 +1,44 @@
+=== SHORT DESCRIPTION ===
+Adds a Stealth skill to the Character tab. Steal, pick locks and trespass unseen to level it up, and get up to 50% harder to notice for people and cameras. Crouching and darkness help, drinking hurts, and level 10 unlocks the Shadow perk.
+
+=== FULL DESCRIPTION (BBCode) ===
+[size=5][b]Stealth[/b][/size]
+A new [b]Stealth[/b] skill for Obenseuer. Get away with things unseen to level it up, and get harder to notice as you go.
+
+[size=4][b]Features[/b][/size]
+[list]
+[*][b]A real skill on the Character tab.[/b] It looks like the game's own skills, starts unlearned, and shows the "New skill learned" and level-up popups.
+[*][b]XP for getting away with it:[/b]
+[list]
+[*]taking things that aren't yours without anyone seeing (valuable things give more; each kind of item from each owner counts once a day)
+[*]picking locks unseen (harder locks give more)
+[*]spending time unseen in places you're not allowed to be (capped per area per day)
+[/list]
+[*][b]Harder to notice.[/b] People and cameras are less likely to spot you: 5% less per level, [b]50% at level 10[/b]. People's sight range also gets shorter (30% shorter at level 10).
+[*][b]Crouching[/b] and [b]darkness[/b] (outdoors at night, without a light) make you even harder to notice.
+[*][b]Your state matters.[/b] Being drunk makes you clumsy and easier to spot, but getting away with it drunk gives extra XP. Your Drinking skill shrinks the penalty, and mushrooms change your effective level.
+[*][b]Level 10 perk: Shadow.[/b] When you do get caught for theft, burglary or trespassing, the crime counts as 30% less serious.
+[*]The Stealth card shows how much less likely you are to be seen right now.
+[*]XP is saved with your save game and belongs to that character only.
+[/list]
+Every number can be changed in the config file or with ConfigurationManager.
+
+[size=4][b]Requirements[/b][/size]
+[list]
+[*]BepInEx 6 (Unity.Mono, x64)
+[/list]
+
+[size=4][b]Installation[/b][/size]
+Extract the archive into the game folder (the one with Obenseuer.exe), so the DLL ends up in [i]BepInEx\plugins\Obenseuer-Stealth\[/i].
+
+[size=4][b]Works well with[/b][/size]
+[list]
+[*][b]Haggling[/b]: a Haggling skill for better trader prices.
+[*][b]Bribery+[/b]: ask anyone for money with the game's Bribery skill.
+[*][b]Scavenger[/b] and [b]Loot Map[/b].
+[/list]
+
+[size=4][b]Source[/b][/size]
+https://github.com/JuanBerta/Obenseuer-Stealth
+
+Made by JuanBerta, with AI assistance (Claude).
