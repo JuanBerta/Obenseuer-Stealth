@@ -16,7 +16,7 @@ namespace StealthMod
 		protected override string SaveTitle { get { return "Stealth"; } }
 	}
 
-	[BepInPlugin("JuanBerta.Obenseuer.Stealth", "Stealth", "1.0.0")]
+	[BepInPlugin("JuanBerta.Obenseuer.Stealth", "Stealth", "1.0.1")]
 	public class StealthPlugin : BaseUnityPlugin
 	{
 		internal static CustomSkill Skill;
@@ -209,22 +209,37 @@ namespace StealthMod
 
 		private static int theftDepth;
 		private static float theftValue;
+		private static string theftKey;
 		private static int pendingFrame = -1;
 		private static bool pendingSeen;
 		private static float pendingXp;
+		private static string pendingKey;
 
-		private static void Candidate(float xp, bool seen)
+		// Each kind of item from each owner (or each owned object) gives XP once per in-game day, so
+		// putting a stolen item back and taking it again gives nothing.
+		private static void Candidate(float xp, bool seen, string key)
 		{
 			int frame = Time.frameCount;
-			if (frame != pendingFrame) { Flush(); pendingFrame = frame; pendingSeen = false; pendingXp = 0f; }
+			if (frame != pendingFrame) { Flush(); pendingFrame = frame; pendingSeen = false; pendingXp = 0f; pendingKey = null; }
 			pendingSeen |= seen;
-			pendingXp = Mathf.Max(pendingXp, xp);
+			if (xp > pendingXp || pendingKey == null) { pendingXp = Mathf.Max(pendingXp, xp); pendingKey = key; }
+		}
+
+		private static string ObjectKey(GameObject go)
+		{
+			Vector3 p = go.transform.position;
+			return "obj@" + go.scene.name + "@" + Mathf.RoundToInt(p.x * 2f) + "," + Mathf.RoundToInt(p.y * 2f) + "," + Mathf.RoundToInt(p.z * 2f);
 		}
 
 		private static void Flush()
 		{
 			if (pendingFrame < 0 || pendingSeen || pendingXp <= 0f || SkillHost.Save == null) { pendingFrame = -1; return; }
 			pendingFrame = -1;
+			if (!string.IsNullOrEmpty(pendingKey))
+			{
+				if (SkillHost.Save.GetDaily(pendingKey) > 0f) return;   // already got XP for this today
+				SkillHost.Save.SetDaily(pendingKey, 1f);
+			}
 			float count = SkillHost.Save.AddDaily("thefts", 1f);
 			float fresh = 1f / (1f + DailyDiminishing.Value * (count - 1f));
 			Award(pendingXp * fresh, "unseen theft");
@@ -340,9 +355,10 @@ namespace StealthMod
 			// Taking an owned item into your inventory: the game checks for witnesses right here.
 			[HarmonyPatch(typeof(Inventory), "CheckForAddedStolenItems")]
 			[HarmonyPrefix]
-			private static void Stolen_Prefix(Item item, int amount)
+			private static void Stolen_Prefix(Item item, int amount, int owner)
 			{
 				theftDepth++;
+				theftKey = item != null ? "item@" + item.ID + ":" + owner : null;
 				try { theftValue = item != null ? item.GetItemSalePriceUnrounded() * Mathf.Max(1, amount) : 0f; }
 				catch (Exception) { theftValue = 0f; }
 			}
@@ -362,8 +378,8 @@ namespace StealthMod
 				try
 				{
 					if (!invoke || type != WitnessType.Crime || !Skill.Enabled.Value || !SkillHost.InGame) return;
-					if (theftDepth > 0) Candidate(TheftXp(theftValue), __result);
-					else if (target != null) Candidate(TheftXp(0f), __result);
+					if (theftDepth > 0) Candidate(TheftXp(theftValue), __result, theftKey);
+					else if (target != null) Candidate(TheftXp(0f), __result, ObjectKey(target));
 					else if (lockpicking && __result) lockpickSeen = true;
 				}
 				catch (Exception) { }

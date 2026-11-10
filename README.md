@@ -5,7 +5,7 @@ A new **Stealth** skill for Obenseuer. Get away with things unseen to level it u
 ## Features
 - **A real skill on the Character tab.** It looks like the game's own skills, starts unlearned, and shows the "New skill learned" and level-up popups.
 - **XP for getting away with it:**
-  - taking things that aren't yours without anyone seeing (valuable things give more)
+  - taking things that aren't yours without anyone seeing (valuable things give more; each kind of item from each owner counts once a day)
   - picking locks unseen (harder locks give more)
   - spending time unseen in places you're not allowed to be (capped per area per day)
 - **Harder to notice.** People and cameras are less likely to spot you: 5% less per level, 50% at level 10. People's sight range also gets shorter (30% shorter at level 10).
